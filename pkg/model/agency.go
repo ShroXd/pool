@@ -1,6 +1,9 @@
 package model
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type Agency struct {
 	Address   string
@@ -8,6 +11,7 @@ type Agency struct {
 	Anonymous string
 	Type      string
 	Location  string
+	Timestamp time.Time
 }
 
 func (t Agency) MarshalBinary() ([]byte, error) {

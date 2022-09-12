@@ -23,6 +23,6 @@ func InitColly() {
 		fmt.Println("Visiting", r.URL)
 	})
 
-	//RegisterIP(Colly)
-	RegisterPage(Colly)
+	RegisterIP(Colly)
+	//RegisterPage(Colly)
 }

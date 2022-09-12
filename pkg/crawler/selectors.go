@@ -5,6 +5,7 @@ import (
 	"log"
 	"pool/pkg/db"
 	"pool/pkg/model"
+	"time"
 )
 
 func RegisterIP(c *colly.Collector) {
@@ -20,6 +21,7 @@ func RegisterIP(c *colly.Collector) {
 			Anonymous: e.ChildText("td:nth-child(3)"),
 			Type:      e.ChildText("td:nth-child(4)"),
 			Location:  e.ChildText("td:nth-child(5)"),
+			Timestamp: time.Now(),
 		}
 
 		// TODO: store data from queue async

@@ -17,6 +17,5 @@ func InitRedis()  {
 		Password: "redispw",
 		// TODO: make the db to be variable
 		DB:       1,
-		// TODO: add timestamp for checker
 	})
 }
