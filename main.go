@@ -7,9 +7,10 @@ import (
 
 func main() {
 	initDeps()
+
+	crawler.Run()
 }
 
 func initDeps() {
 	db.InitRedis()
-	crawler.InitColly()
 }
