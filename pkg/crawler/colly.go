@@ -56,7 +56,7 @@ func initColly() {
 	Colly.Limit(&colly.LimitRule{
 		DomainGlob:  "*ip3366.*",
 		Parallelism: 1,
-		Delay: 20 * time.Second,
+		Delay:       20 * time.Second,
 	})
 
 	registerIP(Colly)
