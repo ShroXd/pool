@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v9"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/debug"
 	"log"
+	"pool/pkg/db"
 	"pool/pkg/model"
 )
 
@@ -14,19 +14,13 @@ var ctx = context.Background()
 
 func main() {
 	c := colly.NewCollector(
-		//colly.AllowedDomains("freeproxylists.net", "www.freeproxylists.net"),
+		colly.AllowedDomains("free.kuaidaili.com", "kuaidaili.com"),
 		colly.CacheDir("./cache"),
+		// TODO: disable on prod
 		colly.Debugger(&debug.LogDebugger{}),
 	)
 
-	//agencies := list.New()
-
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:55000",
-		Username: "default",
-		Password: "redispw",
-		DB:       0,
-	})
+	initDeps()
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
@@ -55,10 +49,9 @@ func main() {
 			Location:  e.ChildText("td:nth-child(5)"),
 		}
 
-		// store data from queue async
-		//agencies.PushBack(agency)
+		// TODO: store data from queue async
 
-		err := rdb.Set(ctx, addr, agency, 0).Err()
+		err := db.RdbKuaidaili.Set(ctx, addr, agency, 0).Err()
 		if err != nil {
 			//panic(err)
 			log.Println("ERROR!!!!!!1")
@@ -66,6 +59,9 @@ func main() {
 		}
 	})
 
-	//c.Visit("https://www.freeproxylists.net/zh/")
 	c.Visit("https://free.kuaidaili.com/free/intr/")
+}
+
+func initDeps() {
+	db.InitRedis()
 }
