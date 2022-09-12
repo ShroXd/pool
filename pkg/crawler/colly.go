@@ -10,13 +10,16 @@ import (
 	"pool/pkg/db"
 	"pool/pkg/model"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var Colly *colly.Collector
 var ctx = context.Background()
 
-const baseURL = "https://free.kuaidaili.com/free/intr/"
+const baseURL = "http://www.ip3366.net/"
+
+// TODO: encapsulate the logic for single website
 
 func Run() {
 	initColly()
@@ -32,7 +35,7 @@ func Run() {
 
 func initColly() {
 	Colly = colly.NewCollector(
-		//colly.AllowedDomains("free.kuaidaili.com", "kuaidaili.com"),
+		colly.AllowedDomains("www.ip3366.net"),
 		colly.CacheDir("./cache"),
 		// TODO: disable on prod
 		colly.Debugger(&debug.LogDebugger{}),
@@ -51,9 +54,9 @@ func initColly() {
 	})
 
 	Colly.Limit(&colly.LimitRule{
-		DomainGlob: "*kuaidaili.*",
-		Parallelism: 4,
-		RandomDelay: 1 * time.Second,
+		DomainGlob:  "*ip3366.*",
+		Parallelism: 1,
+		Delay: 20 * time.Second,
 	})
 
 	registerIP(Colly)
@@ -64,15 +67,7 @@ func initUrls(q *queue.Queue) {
 
 	urlsCollector.OnHTML("div[id=listnav]", func(e *colly.HTMLElement) {
 		// TODO: page url generator
-		total := e.ChildText("li:nth-last-child(2)")
-
-		if err := db.RdbContext.Set(ctx, "page:total", total, 0).Err(); err != nil {
-			log.Println("Error during writing page:total ", err)
-		}
-
-		if err := db.RdbContext.Set(ctx, "page:current", 1, 0).Err(); err != nil {
-			log.Println("Error during writing page:current ", err)
-		}
+		total := strings.Split(e.ChildText("strong"), "/")[1]
 
 		max, err := strconv.Atoi(total)
 		if err != nil {
@@ -80,7 +75,7 @@ func initUrls(q *queue.Queue) {
 		}
 
 		for i := 1; i < max; i++ {
-			err := q.AddURL(baseURL + strconv.Itoa(i) + "/")
+			err := q.AddURL(baseURL + "?stype=1&page=" + strconv.Itoa(i))
 			if err != nil {
 				log.Println(err)
 			}
@@ -103,15 +98,15 @@ func registerIP(c *colly.Collector) {
 		agency := model.Agency{
 			Address:   addr,
 			Port:      e.ChildText("td:nth-child(2)"),
-			Anonymous: e.ChildText("td:nth-child(3)"),
+			Anonymous: convertChinese(e.ChildText("td:nth-child(3)")),
 			Type:      e.ChildText("td:nth-child(4)"),
-			Location:  e.ChildText("td:nth-child(5)"),
+			Location:  convertChinese(e.ChildText("td:nth-child(6)")),
 			Timestamp: time.Now(),
 		}
 
 		// TODO: store data from queue async
 
-		if err := db.RdbKuaidaili.Set(ctx, addr, agency, 0).Err(); err != nil {
+		if err := db.RdbProxy.Set(ctx, addr, agency, 0).Err(); err != nil {
 			log.Println("Error during writing IPs: ", err)
 		}
 	})
