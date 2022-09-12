@@ -7,8 +7,6 @@ import (
 
 func main() {
 	initDeps()
-
-	crawler.Colly.Visit("https://free.kuaidaili.com/free/intr/")
 }
 
 func initDeps() {

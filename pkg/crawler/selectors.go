@@ -40,11 +40,11 @@ func RegisterPage(c *colly.Collector) {
 		// TODO: page url generator
 		lastPage := e.ChildText("li:nth-last-child(2)")
 
-		if err := db.RdbContext.Set(ctx, "page:total", lastPage, 0); err != nil {
+		if err := db.RdbContext.Set(ctx, "page:total", lastPage, 0).Err(); err != nil {
 			log.Println("Error during writing page:total ", err)
 		}
 
-		if err := db.RdbContext.Set(ctx, "page:current", 1, 0); err != nil {
+		if err := db.RdbContext.Set(ctx, "page:current", 1, 0).Err(); err != nil {
 			log.Println("Error during writing page:current ", err)
 		}
 	})
