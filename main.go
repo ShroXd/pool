@@ -2,38 +2,15 @@ package main
 
 import (
 	"context"
-	"encoding"
-	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/debug"
 	"log"
+	"pool/pkg/model"
 )
 
-type Agency struct {
-	Address   string
-	Port      string
-	Anonymous string
-	Type      string
-	Location  string
-	encoding.BinaryMarshaler
-	encoding.BinaryUnmarshaler
-}
-
 var ctx = context.Background()
-
-func (t Agency) MarshalBinary() ([]byte, error) {
-	return json.Marshal(t)
-}
-
-func (t Agency) UnmarshalBinary(data []byte) error {
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func main() {
 	c := colly.NewCollector(
@@ -70,7 +47,7 @@ func main() {
 			return
 		}
 
-		agency := Agency{
+		agency := model.Agency{
 			Address:   addr,
 			Port:      e.ChildText("td:nth-child(2)"),
 			Anonymous: e.ChildText("td:nth-child(3)"),
