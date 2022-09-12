@@ -1,12 +1,15 @@
 package crawler
 
 import (
+	"context"
 	"github.com/gocolly/colly"
 	"log"
 	"pool/pkg/db"
 	"pool/pkg/model"
 	"time"
 )
+
+var ctx = context.Background()
 
 func RegisterIP(c *colly.Collector) {
 	c.OnHTML("tr", func(e *colly.HTMLElement) {
@@ -26,20 +29,23 @@ func RegisterIP(c *colly.Collector) {
 
 		// TODO: store data from queue async
 
-		err := db.RdbKuaidaili.Set(ctx, addr, agency, 0).Err()
-		if err != nil {
-			//panic(err)
-			log.Println("ERROR!!!!!!1")
-			log.Println(err)
+		if err := db.RdbKuaidaili.Set(ctx, addr, agency, 0).Err(); err != nil {
+			log.Println("Error during writing IPs: ", err)
 		}
 	})
 }
 
 func RegisterPage(c *colly.Collector) {
 	c.OnHTML("div[id=listnav]", func(e *colly.HTMLElement) {
-		// TODO: Store it in the redis
 		// TODO: page url generator
 		lastPage := e.ChildText("li:nth-last-child(2)")
-		log.Println("lastPage: ", lastPage)
+
+		if err := db.RdbContext.Set(ctx, "page:total", lastPage, 0); err != nil {
+			log.Println("Error during writing page:total ", err)
+		}
+
+		if err := db.RdbContext.Set(ctx, "page:current", 1, 0); err != nil {
+			log.Println("Error during writing page:current ", err)
+		}
 	})
 }

@@ -1,14 +1,11 @@
 package crawler
 
 import (
-	"context"
 	"fmt"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/debug"
 )
 
-
-var ctx = context.Background()
 var Colly *colly.Collector
 
 func InitColly() {
@@ -23,6 +20,6 @@ func InitColly() {
 		fmt.Println("Visiting", r.URL)
 	})
 
-	RegisterIP(Colly)
-	//RegisterPage(Colly)
+	//RegisterIP(Colly)
+	RegisterPage(Colly)
 }
