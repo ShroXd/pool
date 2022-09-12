@@ -15,7 +15,8 @@ func InitRedis()  {
 		Addr:     "127.0.0.1:55000",
 		Username: "default",
 		Password: "redispw",
-		DB:       0,
+		// TODO: make the db to be variable
+		DB:       1,
 		// TODO: add timestamp for checker
 	})
 }
