@@ -42,6 +42,7 @@ func (c CloudProxy) New() CloudProxy {
 	cloud.domain = "www.ip3366.net"
 	cloud.cacheDir = "./cache"
 	cloud.limit = &colly.LimitRule{
+		// TODO: generate it based on baseURL
 		DomainGlob:  "*.ip3366.*",
 		Parallelism: 1,
 		Delay:       20 * time.Second,
@@ -92,13 +93,7 @@ func (c CloudProxy) IpParser(p *pubsub.Publisher) (string, colly.HTMLCallback) {
 			Timestamp: time.Now(),
 		}
 
-		// TODO: store data from queue async
-
 		p.Publish(agency)
-
-		//if err := db.RdbProxy.Set(ctx, addr, agency, 0).Err(); err != nil {
-		//	log.Println("Error during writing IPs: ", err)
-		//}
 	}
 
 	return selector, fn
