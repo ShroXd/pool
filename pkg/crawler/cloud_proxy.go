@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"context"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/queue"
 	"log"
@@ -11,10 +12,13 @@ import (
 	"time"
 )
 
+var ctx = context.Background()
+
 type CloudProxy struct {
-	BaseURL string
-	Domain  string
-	Limit   *colly.LimitRule
+	BaseURL  string
+	Domain   string
+	CacheDir string
+	Limit    *colly.LimitRule
 }
 
 func (c CloudProxy) New() CloudProxy {
@@ -23,6 +27,7 @@ func (c CloudProxy) New() CloudProxy {
 	cloud.BaseURL = "http://www.ip3366.net/"
 	// TODO: support multi domains
 	cloud.Domain = "www.ip3366.net"
+	cloud.CacheDir = "./cache"
 	cloud.Limit = &colly.LimitRule{
 		DomainGlob:  "*ip3366.*",
 		Parallelism: 1,
@@ -45,7 +50,7 @@ func (c CloudProxy) UrlParser(q *queue.Queue) (string, colly.HTMLCallback) {
 		}
 
 		for i := 1; i < max; i++ {
-			err := q.AddURL(baseURL + "?stype=1&page=" + strconv.Itoa(i))
+			err := q.AddURL(c.BaseURL + "?stype=1&page=" + strconv.Itoa(i))
 			if err != nil {
 				log.Println(err)
 			}
