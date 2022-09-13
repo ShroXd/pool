@@ -6,15 +6,17 @@ import (
 	"github.com/gocolly/colly/extensions"
 	"github.com/gocolly/colly/queue"
 	"log"
+	"pool/pkg/pubsub"
+	"time"
 )
 
 var Colly *colly.Collector
 
-func Run(cp ProxyWebsite) {
-	initColly(cp)
+func Run(pw ProxyWebsite, publisher *pubsub.Publisher) {
+	initColly(pw, publisher)
 
 	q, _ := queue.New(10, &queue.InMemoryQueueStorage{MaxSize: 10000})
-	initUrls(cp, q)
+	initUrls(pw, q)
 
 	err := q.Run(Colly)
 	if err != nil {
@@ -24,10 +26,10 @@ func Run(cp ProxyWebsite) {
 	log.Println("Finished!")
 }
 
-func initColly(cp ProxyWebsite) {
+func initColly(pw ProxyWebsite, publisher *pubsub.Publisher) {
 	Colly = colly.NewCollector(
-		colly.AllowedDomains(cp.getDomain()),
-		colly.CacheDir(cp.getCacheDir()),
+		colly.AllowedDomains(pw.getDomain()),
+		colly.CacheDir(pw.getCacheDir()),
 		// TODO: disable on prod
 		colly.Debugger(&debug.LogDebugger{}),
 	)
@@ -37,15 +39,17 @@ func initColly(cp ProxyWebsite) {
 	extensions.RandomUserAgent(Colly)
 
 	Colly.OnRequest(func(r *colly.Request) {
+		// TODO: remove this when figure out how the limit of colly works
+		time.Sleep(5 * time.Second)
 		log.Println("Visiting", r.URL)
 	})
 
-	err := Colly.Limit(cp.getLimit())
+	err := Colly.Limit(pw.getLimit())
 	if err != nil {
 		print("Limit: ", err)
 	}
 
-	Colly.OnHTML(cp.IpParser())
+	Colly.OnHTML(pw.IpParser(publisher))
 }
 
 func initUrls(cp ProxyWebsite, q *queue.Queue) {

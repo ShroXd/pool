@@ -1,9 +1,12 @@
 package crawler
 
 import (
+	"context"
 	"log"
 	"pool/pkg/db"
 )
+
+var ctx = context.Background()
 
 func GenerateURL() string {
 	total, err := db.RdbContext.Get(ctx, "page:total").Result()

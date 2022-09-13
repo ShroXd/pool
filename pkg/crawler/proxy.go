@@ -3,6 +3,7 @@ package crawler
 import (
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/queue"
+	"pool/pkg/pubsub"
 )
 
 type ProxyWebsite interface {
@@ -12,5 +13,5 @@ type ProxyWebsite interface {
 	getLimit() *colly.LimitRule
 
 	UrlParser(q *queue.Queue) (string, colly.HTMLCallback)
-	IpParser() (string, colly.HTMLCallback)
+	IpParser(p *pubsub.Publisher) (string, colly.HTMLCallback)
 }

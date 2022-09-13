@@ -1,18 +1,15 @@
 package crawler
 
 import (
-	"context"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/queue"
 	"log"
-	"pool/pkg/db"
 	"pool/pkg/model"
+	"pool/pkg/pubsub"
 	"strconv"
 	"strings"
 	"time"
 )
-
-var ctx = context.Background()
 
 type CloudProxy struct {
 	baseURL  string
@@ -77,7 +74,7 @@ func (c CloudProxy) UrlParser(q *queue.Queue) (string, colly.HTMLCallback) {
 	return selector, fn
 }
 
-func (c CloudProxy) IpParser() (string, colly.HTMLCallback) {
+func (c CloudProxy) IpParser(p *pubsub.Publisher) (string, colly.HTMLCallback) {
 	selector := "tr"
 
 	fn := func(e *colly.HTMLElement) {
@@ -97,9 +94,11 @@ func (c CloudProxy) IpParser() (string, colly.HTMLCallback) {
 
 		// TODO: store data from queue async
 
-		if err := db.RdbProxy.Set(ctx, addr, agency, 0).Err(); err != nil {
-			log.Println("Error during writing IPs: ", err)
-		}
+		p.Publish(agency)
+
+		//if err := db.RdbProxy.Set(ctx, addr, agency, 0).Err(); err != nil {
+		//	log.Println("Error during writing IPs: ", err)
+		//}
 	}
 
 	return selector, fn

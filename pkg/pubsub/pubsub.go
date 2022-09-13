@@ -30,11 +30,11 @@ func (p *Publisher) Subscribe() Subscriber {
 }
 
 func (p *Publisher) SubscribeTopic(topic Topic) Subscriber {
-	p.m.Lock()
-	defer p.m.Unlock()
-
 	ch := make(Subscriber, p.buffer)
+
+	p.m.Lock()
 	p.subscribers[ch] = topic
+	p.m.Unlock()
 
 	return ch
 }
@@ -62,6 +62,7 @@ func (p *Publisher) Publish(v interface{}) {
 	defer p.m.Unlock()
 
 	var wg sync.WaitGroup
+
 	for sub, topic := range p.subscribers {
 		wg.Add(1)
 		go p.send(sub, topic, v, &wg)
