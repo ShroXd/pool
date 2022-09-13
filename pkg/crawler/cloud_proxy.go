@@ -45,9 +45,10 @@ func (c CloudProxy) New() CloudProxy {
 	cloud.domain = "www.ip3366.net"
 	cloud.cacheDir = "./cache"
 	cloud.limit = &colly.LimitRule{
-		DomainGlob:  "*ip3366.*",
+		DomainGlob:  "*.ip3366.*",
 		Parallelism: 1,
 		Delay:       20 * time.Second,
+		RandomDelay: 10 * time.Second,
 	}
 
 	return cloud

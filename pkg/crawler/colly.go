@@ -20,6 +20,8 @@ func Run(cp ProxyWebsite) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Println("Finished!")
 }
 
 func initColly(cp ProxyWebsite) {
@@ -37,7 +39,12 @@ func initColly(cp ProxyWebsite) {
 	Colly.OnRequest(func(r *colly.Request) {
 		log.Println("Visiting", r.URL)
 	})
-	Colly.Limit(cp.getLimit())
+
+	err := Colly.Limit(cp.getLimit())
+	if err != nil {
+		print("Limit: ", err)
+	}
+
 	Colly.OnHTML(cp.IpParser())
 }
 
