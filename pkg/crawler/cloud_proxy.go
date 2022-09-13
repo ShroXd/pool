@@ -15,20 +15,36 @@ import (
 var ctx = context.Background()
 
 type CloudProxy struct {
-	BaseURL  string
-	Domain   string
-	CacheDir string
-	Limit    *colly.LimitRule
+	baseURL  string
+	domain   string
+	cacheDir string
+	limit    *colly.LimitRule
+}
+
+func (c CloudProxy) getBaseURL() string {
+	return c.baseURL
+}
+
+func (c CloudProxy) getDomain() string {
+	return c.domain
+}
+
+func (c CloudProxy) getCacheDir() string {
+	return c.cacheDir
+}
+
+func (c CloudProxy) getLimit() *colly.LimitRule {
+	return c.limit
 }
 
 func (c CloudProxy) New() CloudProxy {
 	cloud := CloudProxy{}
 
-	cloud.BaseURL = "http://www.ip3366.net/"
+	cloud.baseURL = "http://www.ip3366.net/"
 	// TODO: support multi domains
-	cloud.Domain = "www.ip3366.net"
-	cloud.CacheDir = "./cache"
-	cloud.Limit = &colly.LimitRule{
+	cloud.domain = "www.ip3366.net"
+	cloud.cacheDir = "./cache"
+	cloud.limit = &colly.LimitRule{
 		DomainGlob:  "*ip3366.*",
 		Parallelism: 1,
 		Delay:       20 * time.Second,
@@ -50,7 +66,7 @@ func (c CloudProxy) UrlParser(q *queue.Queue) (string, colly.HTMLCallback) {
 		}
 
 		for i := 1; i < max; i++ {
-			err := q.AddURL(c.BaseURL + "?stype=1&page=" + strconv.Itoa(i))
+			err := q.AddURL(c.baseURL + "?stype=1&page=" + strconv.Itoa(i))
 			if err != nil {
 				log.Println(err)
 			}

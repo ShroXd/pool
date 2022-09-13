@@ -10,7 +10,7 @@ import (
 
 var Colly *colly.Collector
 
-func Run(cp CloudProxy) {
+func Run(cp ProxyWebsite) {
 	initColly(cp)
 
 	q, _ := queue.New(10, &queue.InMemoryQueueStorage{MaxSize: 10000})
@@ -22,10 +22,10 @@ func Run(cp CloudProxy) {
 	}
 }
 
-func initColly(cp CloudProxy) {
+func initColly(cp ProxyWebsite) {
 	Colly = colly.NewCollector(
-		colly.AllowedDomains(cp.Domain),
-		colly.CacheDir(cp.CacheDir),
+		colly.AllowedDomains(cp.getDomain()),
+		colly.CacheDir(cp.getCacheDir()),
 		// TODO: disable on prod
 		colly.Debugger(&debug.LogDebugger{}),
 	)
@@ -37,15 +37,15 @@ func initColly(cp CloudProxy) {
 	Colly.OnRequest(func(r *colly.Request) {
 		log.Println("Visiting", r.URL)
 	})
-	Colly.Limit(cp.Limit)
+	Colly.Limit(cp.getLimit())
 	Colly.OnHTML(cp.IpParser())
 }
 
-func initUrls(cp CloudProxy, q *queue.Queue) {
+func initUrls(cp ProxyWebsite, q *queue.Queue) {
 	urlsCollector := Colly.Clone()
 	urlsCollector.OnHTML(cp.UrlParser(q))
 
-	err := urlsCollector.Visit(cp.BaseURL)
+	err := urlsCollector.Visit(cp.getBaseURL())
 	if err != nil {
 		log.Println(err)
 	}
