@@ -8,7 +8,7 @@ import (
 func main() {
 	initDeps()
 
-	crawler.Run()
+	crawler.Run(crawler.CloudProxy{}.New())
 }
 
 func initDeps() {

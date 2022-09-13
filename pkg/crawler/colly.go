@@ -10,9 +10,7 @@ import (
 
 var Colly *colly.Collector
 
-func Run() {
-	cp := CloudProxy{}.New()
-
+func Run(cp CloudProxy) {
 	initColly(cp)
 
 	q, _ := queue.New(10, &queue.InMemoryQueueStorage{MaxSize: 10000})
