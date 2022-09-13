@@ -11,15 +11,16 @@ import (
 )
 
 var ctx = context.Background()
+var quit chan int
 
 func main() {
+	quit = make(chan int)
+
 	initDeps()
 
 	p := pubsub.NewPublisher(10*time.Second, 100)
-	// TODO: How to control the close for multi crawler
-	defer p.Close()
-
 	all := p.Subscribe()
+
 	crawler.Run(crawler.CloudProxy{}.New(), p)
 
 	go func() {
@@ -28,9 +29,11 @@ func main() {
 				log.Println("Error during writing IPs: ", err)
 			}
 		}
+
+		quit <- 0
 	}()
 
-	// TODO: close the channel correctly instead of exit main function directly
+	<-quit
 }
 
 func initDeps() {

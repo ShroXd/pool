@@ -24,6 +24,7 @@ func Run(pw ProxyWebsite, publisher *pubsub.Publisher) {
 	}
 
 	log.Println("Finished!")
+	publisher.Close()
 }
 
 func initColly(pw ProxyWebsite, publisher *pubsub.Publisher) {
@@ -39,8 +40,7 @@ func initColly(pw ProxyWebsite, publisher *pubsub.Publisher) {
 	extensions.RandomUserAgent(Colly)
 
 	Colly.OnRequest(func(r *colly.Request) {
-		// TODO: remove this when figure out how the limit of colly works
-		time.Sleep(5 * time.Second)
+		time.Sleep(3 * time.Second)
 		log.Println("Visiting", r.URL)
 	})
 
