@@ -7,7 +7,6 @@ import (
 	"github.com/gocolly/colly/queue"
 	"log"
 	"pool/pkg/pubsub"
-	"time"
 )
 
 var Colly *colly.Collector
@@ -40,7 +39,6 @@ func initColly(pw ProxyWebsite, publisher *pubsub.Publisher) {
 	extensions.RandomUserAgent(Colly)
 
 	Colly.OnRequest(func(r *colly.Request) {
-		time.Sleep(3 * time.Second)
 		log.Println("Visiting", r.URL)
 	})
 

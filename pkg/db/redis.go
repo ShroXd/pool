@@ -14,14 +14,14 @@ func InitRedis() {
 	// TODO: make the db to be variable
 
 	RdbContext = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:55000",
+		Addr:     "redis:6379",
 		Username: "default",
 		Password: "redispw",
 		DB:       0,
 	})
 
 	RdbProxy = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:55000",
+		Addr:     "redis:6379",
 		Username: "default",
 		Password: "redispw",
 		DB:       1,

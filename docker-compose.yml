@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  crawler:
+    container_name: dockerdev
+    build: ./
+    ports:
+      - "8000:8000"
+    environment:
+      DD_DB_HOST: db
+    command: make run
+    depends_on:
+      - db
+    links:
+      - "db:redis"
+
+  db:
+    container_name: dockerdev-db
+    image: redis:latest
+    command: redis-server --requirepass redispw
+    ports:
+      - "6379:6379"

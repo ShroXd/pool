@@ -45,8 +45,8 @@ func (c CloudProxy) New() CloudProxy {
 		// TODO: generate it based on baseURL
 		DomainGlob:  "*.ip3366.*",
 		Parallelism: 1,
-		Delay:       20 * time.Second,
-		RandomDelay: 10 * time.Second,
+		Delay:       2 * time.Second,
+		RandomDelay: 1 * time.Second,
 	}
 
 	return cloud
