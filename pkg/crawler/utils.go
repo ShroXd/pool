@@ -24,4 +24,3 @@ func convertChinese(s string) string {
 
 	return output
 }
-
