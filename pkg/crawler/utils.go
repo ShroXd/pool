@@ -17,6 +17,7 @@ func increaseNum(s string) (string, error) {
 }
 
 func convertChinese(s string) string {
+	// TODO: replace iconv since it causes build fail on Windows: https://github.com/djimenez/iconv-go/issues/42
 	output, err := iconv.ConvertString(s, "GB2312", "utf-8")
 	if err != nil {
 		log.Println(err)
