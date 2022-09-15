@@ -20,7 +20,9 @@ func main() {
 	p := pubsub.NewPublisher(10*time.Second, 100)
 	all := p.Subscribe()
 
-	crawler.Run(crawler.NewCloudProxy(), p)
+	// TODO: figure out how to run different crawlers concurrently
+	//crawler.Run(crawler.NewCloudProxy(), p)
+	crawler.Run(crawler.NewQuickProxy(), p)
 	go db.WriteData(ctx, all, db.StoreFnBuilder(db.RdbProxy), quit)
 }
 
