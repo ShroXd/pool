@@ -62,7 +62,7 @@ func (q QuickProxy) UrlParser(queue *queue.Queue) (string, colly.HTMLCallback) {
 		}
 
 		log.Println("Max: ", max)
-		for i := 1; i < 2; i++ {
+		for i := 1; i < 10; i++ {
 			log.Println("Add url to queue: ", q.baseURL + strconv.Itoa(i))
 			err := queue.AddURL(q.baseURL + strconv.Itoa(i))
 			if err != nil {
