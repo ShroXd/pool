@@ -11,7 +11,7 @@ import (
 
 var Colly *colly.Collector
 
-func Run(pw ProxyWebsite, publisher *pubsub.Publisher) {
+func Run(pw Processor, publisher *pubsub.Publisher) {
 	initColly(pw, publisher)
 
 	q, _ := queue.New(10, &queue.InMemoryQueueStorage{MaxSize: 10000})
@@ -26,7 +26,7 @@ func Run(pw ProxyWebsite, publisher *pubsub.Publisher) {
 	publisher.Close()
 }
 
-func initColly(pw ProxyWebsite, publisher *pubsub.Publisher) {
+func initColly(pw Processor, publisher *pubsub.Publisher) {
 	Colly = colly.NewCollector(
 		colly.AllowedDomains(pw.getDomain()),
 		colly.CacheDir(pw.getCacheDir()),
@@ -50,7 +50,7 @@ func initColly(pw ProxyWebsite, publisher *pubsub.Publisher) {
 	Colly.OnHTML(pw.IpParser(publisher))
 }
 
-func initUrls(cp ProxyWebsite, q *queue.Queue) {
+func initUrls(cp Processor, q *queue.Queue) {
 	urlsCollector := Colly.Clone()
 	urlsCollector.OnHTML(cp.UrlParser(q))
 

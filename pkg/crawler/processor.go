@@ -6,7 +6,7 @@ import (
 	"pool/pkg/pubsub"
 )
 
-type ProxyWebsite interface {
+type Processor interface {
 	getBaseURL() string
 	getDomain() string
 	getCacheDir() string
