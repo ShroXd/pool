@@ -34,7 +34,7 @@ func (c CloudProxy) getLimit() *colly.LimitRule {
 	return c.limit
 }
 
-func (c CloudProxy) New() CloudProxy {
+func NewCloudProxy() CloudProxy {
 	cloud := CloudProxy{}
 
 	cloud.baseURL = "http://www.ip3366.net/"
