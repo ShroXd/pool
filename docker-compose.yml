@@ -3,12 +3,14 @@ version: "3.8"
 services:
   crawler:
     container_name: dockerdev
-    build: ./
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:
       DD_DB_HOST: db
-    command: make run
+    command: ./main
     depends_on:
       - db
     networks:
