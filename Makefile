@@ -15,9 +15,8 @@ release:
 	docker tag  ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} ${DOCKER_USERNAME}/${APPLICATION_NAME}:latest
 	docker push ${DOCKER_USERNAME}/${APPLICATION_NAME}:latest
 
-run:
-	go build -o out/${BINARY_NAME} main.go
-	./out/${BINARY_NAME}
+start:
+	docker compose up
 
 test:
 	go test -v ./...
@@ -31,3 +30,8 @@ clean:
 	rm -rf ./out
 	rm -rf ./cache
 	rm -f *.out
+
+clean-docker:
+	docker rm dockerdev
+	docker rm dockerdev-db
+	docker rmi pool-crawler
