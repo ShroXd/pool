@@ -1,7 +1,14 @@
-BINARY_NAME=main.out
+BINARY_NAME = main.out
+DOCKER_USERNAME = atriiy
+APPLICATION_NAME = pool
+GIT_HASH ?= $(shell git log --format="%h" -n 1)
+
 
 build:
-	go build -o out/${BINARY_NAME} main.go
+	docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} .
+
+push:
+	docker push ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
 
 run:
 	go build -o out/${BINARY_NAME} main.go
@@ -18,4 +25,4 @@ clean:
 	go clean
 	rm -rf ./out
 	rm -rf ./cache
-	rm *.out
+	rm -f *.out
