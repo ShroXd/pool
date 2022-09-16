@@ -24,7 +24,6 @@ func main() {
 
 	go db.WriteData(ctx, all, db.StoreFnBuilder(db.RdbProxy), quit)
 
-	// TODO: figure out how to run different crawlers concurrently
 	crawler.Run(crawler.NewCloudProxy(), p)
 	crawler.Run(crawler.NewQuickProxy(), p)
 }
