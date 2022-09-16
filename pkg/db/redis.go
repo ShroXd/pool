@@ -14,6 +14,7 @@ func InitRedis() {
 	// TODO: make the db to be variable
 
 	RdbContext = redis.NewClient(&redis.Options{
+		// TODO: make it to be environment so that we can deploy it in docker & docker compose
 		Addr:     "redis:6379",
 		Username: "default",
 		Password: "redispw",
