@@ -71,6 +71,7 @@ func (f FreeProxy) IpParser(p *pubsub.Publisher) (string, colly.HTMLCallback) {
 			return
 		}
 
+		// TODO: use protocol instead of type
 		agency := model.Agency{
 			Address:   addr,
 			Port:      e.ChildText("td:nth-child(2)"),
