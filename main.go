@@ -24,9 +24,11 @@ func main() {
 
 	go db.WriteData(ctx, all, db.StoreFnBuilder(db.RdbProxy), quit)
 
-	crawler.Run(crawler.NewFreeProxy(), p)
-	crawler.Run(crawler.NewCloudProxy(), p)
-	crawler.Run(crawler.NewQuickProxy(), p)
+	// TODO: send summary e-mail
+	//crawler.Run(crawler.NewFreeProxy(), p)
+	//crawler.Run(crawler.NewCloudProxy(), p)
+	//crawler.Run(crawler.NewQuickProxy(), p)
+	crawler.FetchProxy(p)
 }
 
 func initDeps() {

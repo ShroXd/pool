@@ -5,6 +5,7 @@ import (
 	"log"
 	"pool/pkg/model"
 	"pool/pkg/pubsub"
+	"strconv"
 	"time"
 )
 
@@ -23,30 +24,40 @@ type Response struct {
 
 func FetchProxy(p *pubsub.Publisher) {
 	client := resty.New()
+	resp := &Response{}
 
-	res := &Response{}
-
-	_, err := client.R().
-		SetResult(res).
-		EnableTrace().
-		Get("https://proxylist.geonode.com/api/proxy-list?limit=50&page=1&sort_by=lastChecked&sort_type=desc")
-	if err != nil {
-		log.Println("Err: ", res)
-	}
-
-	for _, client := range res.Data {
-		agency := model.Agency{
-			Address:   client.Ip,
-			Port:      client.Port,
-			Anonymous: client.AnonymityLevel,
-			Type:      client.Protocols[0],
-			Location:  client.Country + " " + client.City,
-			Timestamp: time.Now(),
+	page := 1
+	for {
+		_, err := client.R().
+			SetResult(resp).
+			EnableTrace().
+			Get("https://proxylist.geonode.com/api/proxy-list?limit=400&page=" + strconv.Itoa(page) + "&sort_by=lastChecked&sort_type=desc")
+		if err != nil {
+			log.Println("Err: ", resp)
 		}
 
-		log.Println("agency: ", agency)
+		log.Println("Fetch data size: ", len(resp.Data))
 
-		p.Publish(agency)
+		if len(resp.Data) == 0 {
+			break
+		} else {
+			for _, client := range resp.Data {
+				agency := model.Agency{
+					Address:   client.Ip,
+					Port:      client.Port,
+					Anonymous: client.AnonymityLevel,
+					Type:      client.Protocols[0],
+					Location:  client.Country + " " + client.City,
+					Timestamp: time.Now(),
+				}
+
+				log.Println("agency: ", agency)
+
+				p.Publish(agency)
+			}
+		}
+
+		page++
 	}
 
 	p.Close()
