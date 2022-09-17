@@ -3,6 +3,7 @@ package crawler
 import (
 	"github.com/djimenez/iconv-go"
 	"log"
+	"net"
 	"strconv"
 )
 
@@ -24,4 +25,16 @@ func convertChinese(s string) string {
 	}
 
 	return output
+}
+
+func isValidIp(ip string) bool {
+	return net.ParseIP(ip) != nil
+}
+
+func proxyType(t string) string {
+	if t == "yes" {
+		return "https"
+	} else {
+		return "http"
+	}
 }

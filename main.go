@@ -24,6 +24,7 @@ func main() {
 
 	go db.WriteData(ctx, all, db.StoreFnBuilder(db.RdbProxy), quit)
 
+	crawler.Run(crawler.NewFreeProxy(), p)
 	crawler.Run(crawler.NewCloudProxy(), p)
 	crawler.Run(crawler.NewQuickProxy(), p)
 }

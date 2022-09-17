@@ -32,11 +32,18 @@ func initColly(pw Processor, publisher *pubsub.Publisher) {
 		colly.CacheDir(pw.getCacheDir()),
 		// TODO: disable on prod
 		colly.Debugger(&debug.LogDebugger{}),
+		colly.AllowURLRevisit(),
 	)
 
 	// TODO: add proxy for each request
 
 	extensions.RandomUserAgent(Colly)
+
+	//rp, e := proxy.RoundRobinProxySwitcher("socks5://host.docker.internal:4781")
+	//if e != nil {
+	//	log.Fatal(e)
+	//}
+	//Colly.SetProxyFunc(rp)
 
 	Colly.OnRequest(func(r *colly.Request) {
 		log.Println("Visiting", r.URL)
