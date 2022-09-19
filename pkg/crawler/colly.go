@@ -7,6 +7,7 @@ import (
 	"github.com/gocolly/colly/queue"
 	"log"
 	"pool/pkg/pubsub"
+	"time"
 )
 
 var Colly *colly.Collector
@@ -16,6 +17,8 @@ func Run(pw Processor, publisher *pubsub.Publisher) {
 
 	q, _ := queue.New(10, &queue.InMemoryQueueStorage{MaxSize: 10000})
 	initUrls(pw, q)
+
+	time.Sleep(3 * time.Second)
 
 	err := q.Run(Colly)
 	if err != nil {
@@ -40,6 +43,7 @@ func initColly(pw Processor, publisher *pubsub.Publisher) {
 	extensions.RandomUserAgent(Colly)
 
 	//rp, e := proxy.RoundRobinProxySwitcher("socks5://host.docker.internal:4781")
+	//rp, e := proxy.RoundRobinProxySwitcher("socks5://localhost:4781")
 	//if e != nil {
 	//	log.Fatal(e)
 	//}
@@ -60,6 +64,8 @@ func initColly(pw Processor, publisher *pubsub.Publisher) {
 func initUrls(cp Processor, q *queue.Queue) {
 	urlsCollector := Colly.Clone()
 	urlsCollector.OnHTML(cp.UrlParser(q))
+
+	extensions.RandomUserAgent(urlsCollector)
 
 	err := urlsCollector.Visit(cp.getBaseURL())
 	if err != nil {

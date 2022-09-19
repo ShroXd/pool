@@ -28,7 +28,8 @@ func main() {
 	//crawler.Run(crawler.NewFreeProxy(), p)
 	//crawler.Run(crawler.NewCloudProxy(), p)
 	//crawler.Run(crawler.NewQuickProxy(), p)
-	crawler.FetchProxy(p)
+	crawler.Run(crawler.NewHideProxy(), p)
+	//crawler.FetchProxy(p)
 }
 
 func initDeps() {
